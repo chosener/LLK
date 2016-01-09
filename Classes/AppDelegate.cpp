@@ -54,10 +54,13 @@ bool AppDelegate::applicationDidFinishLaunching() {
     auto designSize = Size(960, 640);
     
     auto fileUtils = FileUtils::getInstance();
+    
     std::vector<std::string> searchPath;
     
-    if (screenSize.width > 960) {
+    if (screenSize.width > 960)
+    {
         designSize = Size(1136, 640);
+        
         searchPath.push_back("Iphone5");
     }
     

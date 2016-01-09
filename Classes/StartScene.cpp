@@ -339,14 +339,15 @@ void StartGame::initUi(float t)
         // 启用默认调度器，调用系统update函数来刷新
         scheduleUpdate();
         
-        
+        //---------------------------------------------------------
         // 播放按钮
+        ///正常显示
         auto play = Sprite::createWithTexture(textureCache->getTextureForKey(s_button_play));
-        
+        ///被选中
         auto playS = Sprite::createWithTexture(textureCache->getTextureForKey(s_button_play_s));
         
         // 菜单按钮接一个回调函数
-        auto menuItem = MenuItemSprite::create(play, playS, CC_CALLBACK_1(StartGame::play, this));
+        auto menuItem = MenuItemSprite::create(play, play, CC_CALLBACK_1(StartGame::play, this));
         
         auto menu = Menu::create(menuItem, nullptr);
         
@@ -360,13 +361,14 @@ void StartGame::initUi(float t)
 void StartGame::update(float dt)
 {
     // 如果海鸥飞出屏幕，就重新设置其位置，重新执行飞的动作
-    if (mBird->getPosition().y > wSize.height + 20) {
+    if (mBird->getPosition().y > wSize.height + 20)
+    {
         auto point = Vec2(CCRANDOM_0_1() * wSize.width, 10);
         mBird->setPosition(point);
         mBird->runAction(MoveBy::create(floor(5 * CCRANDOM_0_1()), Vec2(CCRANDOM_0_1() * wSize.width, point.y + wSize.height)));
     }
 }
-
+///开始游戏
 void StartGame::play(Ref* sender)
 {
     CCLOG("play----");
