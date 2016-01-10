@@ -165,6 +165,7 @@ void GameScene::initUI()
     
     addChild(menu);
     
+    //触摸监听
     auto dispatcher = Director::getInstance()->getEventDispatcher();
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
@@ -174,12 +175,14 @@ void GameScene::initUI()
     listener->onTouchCancelled = CC_CALLBACK_2(GameScene::onTouchCancelled, this);
     dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
     
+    //画线
     mDraw = DrawNode::create();
     
     addChild(mDraw, 1000);
     
     mPre = Vec2::ZERO;
     
+    //计时器更新
     schedule(SEL_SCHEDULE(&GameScene::update), 1.0);
     
 }
@@ -337,18 +340,24 @@ void GameScene::initMap()
     int x = 1;
     int y = 0;
     // 数组下标从0开始，这里从1开始遍历，那么最外面一圈就是0不变
-    for (int i = 1; i < xCount - 1; i++) {
-        for (int j = 1; j < yCount - 1; j++) {
+    for (int i = 1; i < xCount - 1; i++)
+    {
+        for (int j = 1; j < yCount - 1; j++)
+        {
             // 地图数组赋值
             mMap[i][j] = x;
             // y控制反转，x控制每格值增加，增大到图片总数后从再1开始递增
-            if (y == 1) {
+            if (y == 1)
+            {
                 x++;
                 y = 0;
-                if ( x == iconCount) {
+                if ( x == iconCount)
+                {
                     x = 1;
                 }
-            }else{
+            }
+            else
+            {
                 y = 1;
             }
         }
@@ -360,19 +369,23 @@ void GameScene::initMap()
     
 }
 
+///绘制整个地图
 void GameScene::drawMap()
 {
     // 绘制棋盘上精灵
-    for (int x = 0; x < xCount; x++) {
-        for (int y = 0; y < yCount; y++) {
-            if (mMap[x][y] > 0) {
+    for (int x = 0; x < xCount; x++)
+    {
+        for (int y = 0; y < yCount; y++)
+        {
+            if (mMap[x][y] > 0)
+            {
                 char iconName[64] = {0};
                 // 格式化图片名
                 sprintf(iconName, "%d.png", mMap[x][y]);
                 auto position = indextoScreen(x, y);
                 // 所有图片已经加到帧缓存，这里直接用名字取一帧，创建一个精灵
                 auto icon = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(iconName));
-//                icon->setAnchorPoint(Vec2(0, 0));
+                //icon->setAnchorPoint(Vec2(0, 0));
                 icon->setPosition(position);
                 // 设置一个tag，方便后续识别点击的是那个图标
                 int tag = (yCount - 2) * ( x - 1 ) + y;
@@ -396,15 +409,22 @@ void GameScene::change()
     
     // 遍历地图数组，随机交换位置
     for (int x = 1; x < xCount - 1 ; x++)
-        for (int y = 1; y < yCount - 1; y++) {
+    {
+        for (int y = 1; y < yCount - 1; y++)
+        {
             tempX = 1 + (int)(CCRANDOM_0_1() * (xCount - 2));
             tempY = 1 + (int)(CCRANDOM_0_1() * (yCount - 2));
             tempM = mMap[x][y];
             mMap[x][y] = mMap[tempX][tempY];
             mMap[tempX][tempY] = tempM;
+        }
+        
     }
     
-    if (die()) {
+    //如果是一盘死棋,当前没有可以连接
+    if (die())
+    {
+        //重新布局
         changeMap();
     }
     
@@ -420,7 +440,9 @@ void GameScene::changeMap()
     
     // 遍历地图数组，随机交换位置
     for (int x = 1; x < xCount - 1 ; x++)
-        for (int y = 1; y < yCount - 1; y++) {
+    {
+        for (int y = 1; y < yCount - 1; y++)
+        {
             tempX = 1 + (int)(CCRANDOM_0_1() * (xCount - 2));
             tempY = 1 + (int)(CCRANDOM_0_1() * (yCount - 2));
             tempM = mMap[x][y];
@@ -438,22 +460,27 @@ void GameScene::changeMap()
             auto pic1 = getChildByTag(tag1);
             auto pic2 = getChildByTag(tag2);
             
-            if (pic1) {
+            if (pic1)
+            {
                 pic1->setPosition(pos2);
                 pic1->setTag(tag2);
-            }else{
+            }else
+            {
                 // 如果为空，地图数组对应值要置0
                 mMap[tempX][tempY] = 0;
             }
             
-            if (pic2) {
+            if (pic2)
+            {
                 pic2->setPosition(pos1);
                 pic2->setTag(tag1);
-            }else{
+            }else
+            {
                 mMap[x][y] = 0;
             }
             
         }
+    }
 
 }
 
