@@ -155,6 +155,7 @@ void GameScene::initUI()
     
     auto tip = Sprite::createWithTexture(textureCache->getTextureForKey(s_game_leisure));
     
+    //自动提示连接按钮
     auto menuItemSprite = MenuItemSprite::create(tip, tip, CC_CALLBACK_1(GameScene::autoClear, this));
     
     auto menu = Menu::create(menuItemSprite, nullptr);
@@ -216,10 +217,13 @@ void GameScene::update(float dt)
     }
 }
 
+///胜利,所有mMap == 0时
 bool GameScene::win()
 {
-    for (int x = 0; x < xCount; x++) {
-        for (int y = 0; y < yCount; y++) {
+    for (int x = 0; x < xCount; x++)
+    {
+        for (int y = 0; y < yCount; y++)
+        {
             if (mMap[x][y] != 0) {
                 return false;
             }
@@ -228,6 +232,7 @@ bool GameScene::win()
     return true;
 }
 
+///自动连接
 void GameScene::autoClear(Ref *spender)
 {
 
@@ -734,6 +739,7 @@ void GameScene::clearMatched()
     mPath.clear();
 }
 
+///判断是否是可以连接的
 bool GameScene::link(cocos2d::Vec2 v1, cocos2d::Vec2 v2)
 {
     if (v1.equals(v2)) {
