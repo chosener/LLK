@@ -46,18 +46,112 @@ bool GameScene::init()
 void GameScene::initUI()
 {
     // 纹理缓存，预加载的资源可以直接从缓存取出来
-    auto textureCache = Director::getInstance()->getTextureCache();
+    textureCache = Director::getInstance()->getTextureCache();
     
-//    auto spriteFrameCache = SpriteFrameCache::getInstance();
+    //auto spriteFrameCache = SpriteFrameCache::getInstance();
     
+    this->initBackGround();
+    
+    this->initView();
+    
+    this->initBarTime();
+    
+    this->initButton();
+    
+    //触摸监听
+    auto dispatcher = Director::getInstance()->getEventDispatcher();
+    auto listener = EventListenerTouchOneByOne::create();
+    listener->setSwallowTouches(true);
+    listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
+    listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
+    listener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
+    listener->onTouchCancelled = CC_CALLBACK_2(GameScene::onTouchCancelled, this);
+    dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
+    
+    //画线
+    mDraw = DrawNode::create();
+    
+    addChild(mDraw, 1000);
+    
+    mPre = Vec2::ZERO;
+    
+    //计时器更新
+    schedule(SEL_SCHEDULE(&GameScene::update), 1.0);
+    
+}
+///按钮
+void GameScene::initButton()
+{
+    auto tip = Sprite::createWithTexture(textureCache->getTextureForKey(s_game_leisure));
+    
+    //自动提示连接按钮
+    auto menuItemSprite = MenuItemSprite::create(tip, tip, CC_CALLBACK_1(GameScene::autoClear, this));
+    
+    auto menu = Menu::create(menuItemSprite, nullptr);
+    
+    menu->setAnchorPoint(Vec2(1, 1));
+    
+    menu->setPosition(wSize.width - 100, wSize.height - 100);
+    
+    addChild(menu);
+
+}
+///时间条
+void GameScene::initBarTime()
+{
+    // 时间条背景框
+    auto progressFrame = Sprite::createWithTexture(textureCache->getTextureForKey(s_time_slot));
+    // 锚点，左下角
+    progressFrame->setAnchorPoint(Vec2(0, 0));
+    
+    progressFrame->setPosition(120, wSize.height-50);
+    
+    addChild(progressFrame);
+    
+    // 时间条精灵
+    auto pSprite = Sprite::createWithTexture(textureCache->getTextureForKey(s_time_bars));
+    
+    progress = ProgressTimer::create(pSprite);
+    // 锚点，左下角
+    progress->setAnchorPoint(Vec2(0, 0));
+    // 类型，条形
+    progress->setType(ProgressTimer::Type::BAR);
+    
+    progress->setPosition(120, wSize.height - 50);
+    // 水平变化
+    progress->setMidpoint(Vec2(0, 0));
+    // 一次一个单位
+    progress->setBarChangeRate(Vec2(1, 0));
+    // 初始100
+    progress->setPercentage(100);
+    
+    addChild(progress);
+    
+    // 时间数字
+    numberTime = Label::createWithSystemFont("100", "Thonburi", 24);
+    
+    numberTime->setAnchorPoint(Vec2(0, 0));
+    
+    numberTime->setPosition(400, wSize.height - 50);
+    
+    numberTime->setColor(Color3B::BLACK);
+    
+    addChild(numberTime);
+}
+
+///背景
+void GameScene::initBackGround()
+{
     // 加载背景
     auto background = Sprite::createWithTexture(textureCache->getTextureForKey(s_backgound));
     
     background->setPosition(wSize.width / 2, wSize.height / 2);
     
     addChild(background);
-    
-    
+}
+///视图
+void GameScene::initView()
+{
     // 白云1
     auto cloud1 = Sprite::createWithTexture(textureCache->getTextureForKey(s_backgound_cloud1));
     // 设置锚点，左下角
@@ -114,77 +208,6 @@ void GameScene::initUI()
     
     addChild(landShadow);
     
-    // 时间条背景框
-    auto progressFrame = Sprite::createWithTexture(textureCache->getTextureForKey(s_time_slot));
-    // 锚点，左下角
-    progressFrame->setAnchorPoint(Vec2(0, 0));
-    
-    progressFrame->setPosition(120, wSize.height-50);
-    
-    addChild(progressFrame);
-    
-    // 时间条精灵
-    auto pSprite = Sprite::createWithTexture(textureCache->getTextureForKey(s_time_bars));
-    
-    progress = ProgressTimer::create(pSprite);
-    // 锚点，左下角
-    progress->setAnchorPoint(Vec2(0, 0));
-    // 类型，条形
-    progress->setType(ProgressTimer::Type::BAR);
-    
-    progress->setPosition(120, wSize.height - 50);
-    // 水平变化
-    progress->setMidpoint(Vec2(0, 0));
-    // 一次一个单位
-    progress->setBarChangeRate(Vec2(1, 0));
-    // 初始100
-    progress->setPercentage(100);
-    
-    addChild(progress);
-    
-    // 时间数字
-    numberTime = Label::createWithSystemFont("100", "Thonburi", 24);
-    
-    numberTime->setAnchorPoint(Vec2(0, 0));
-    
-    numberTime->setPosition(400, wSize.height - 50);
-    
-    numberTime->setColor(Color3B::BLACK);
-    
-    addChild(numberTime);
-    
-    auto tip = Sprite::createWithTexture(textureCache->getTextureForKey(s_game_leisure));
-    
-    //自动提示连接按钮
-    auto menuItemSprite = MenuItemSprite::create(tip, tip, CC_CALLBACK_1(GameScene::autoClear, this));
-    
-    auto menu = Menu::create(menuItemSprite, nullptr);
-    
-    menu->setAnchorPoint(Vec2(1, 1));
-    
-    menu->setPosition(wSize.width - 100, wSize.height - 100);
-    
-    addChild(menu);
-    
-    //触摸监听
-    auto dispatcher = Director::getInstance()->getEventDispatcher();
-    auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);
-    listener->onTouchBegan = CC_CALLBACK_2(GameScene::onTouchBegan, this);
-    listener->onTouchMoved = CC_CALLBACK_2(GameScene::onTouchMoved, this);
-    listener->onTouchEnded = CC_CALLBACK_2(GameScene::onTouchEnded, this);
-    listener->onTouchCancelled = CC_CALLBACK_2(GameScene::onTouchCancelled, this);
-    dispatcher->addEventListenerWithSceneGraphPriority(listener, this);
-    
-    //画线
-    mDraw = DrawNode::create();
-    
-    addChild(mDraw, 1000);
-    
-    mPre = Vec2::ZERO;
-    
-    //计时器更新
-    schedule(SEL_SCHEDULE(&GameScene::update), 1.0);
     
 }
 

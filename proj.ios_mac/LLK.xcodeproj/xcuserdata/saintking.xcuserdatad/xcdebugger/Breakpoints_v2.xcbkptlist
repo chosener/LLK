@@ -15,7 +15,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "569"
             endingLineNumber = "569"
-            landmarkName = "GameScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)"
+            landmarkName = "GameScene::onTouchCancelled(cocos2d::Touch *touch, cocos2d::Event *event)"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

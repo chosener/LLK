@@ -11,6 +11,7 @@
 #include "GameConfig.h"
 #include "cocos2d.h"
 
+USING_NS_CC;
 
 class GameScene : public cocos2d::LayerColor
 {
@@ -36,6 +37,16 @@ public:
     
     CREATE_FUNC(GameScene);
     
+private:
+    TextureCache* textureCache;
+    ///背景
+    void initBackGround();
+    ///视图
+    void initView();
+    ///时间条
+    void initBarTime();
+    ///按钮
+    void initButton();
 private:
     
     void playBgMusic();

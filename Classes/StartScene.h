@@ -10,6 +10,7 @@
 #define __LLK__StartScene__
 
 #include "cocos2d.h"
+USING_NS_CC;
 
 class StartGame : public cocos2d::Layer
 {
@@ -28,6 +29,16 @@ public:
     void play(Ref* sender);
     
     CREATE_FUNC(StartGame);
+    
+private:
+    TextureCache* textureCache;
+    SpriteFrameCache* spriteFrameCache;
+    ///背景
+    void initBackGround();
+    ///视图
+    void initView();
+    ///按钮
+    void initButton();
 };
 
 
