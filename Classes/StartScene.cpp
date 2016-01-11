@@ -77,6 +77,8 @@ bool StartGame::init()
     textureCache->addImage(s_time_slot);
     textureCache->addImage(s_game_dialog);
     textureCache->addImage(s_game_leisure);
+    textureCache->addImage(s_game_pause_n);
+    textureCache->addImage(s_game_pause_s);
     
     spriteFrameCache->addSpriteFramesWithFile(s_boat_plist);
     spriteFrameCache->addSpriteFramesWithFile(s_seagull_plist);

@@ -25,7 +25,8 @@ static const char s_time_slot[]             = "images/time_slot-hd.png";
 static const char s_time_bars[]             = "images/time_bars-hd.png";
 static const char s_game_dialog[]           = "images/game_dialog-hd.png";
 static const char s_game_leisure[]          = "images/game_leisure_logo-hd.png";
-
+static const char s_game_pause_n[]          = "images/pause_n.png";
+static const char s_game_pause_s[]          = "images/pause_s.png";
 
 static const char s_boat_plist[]            = "images/sailing_boat-hd.plist";
 static const char s_seagull_plist[]         = "images/seagull-hd.plist";

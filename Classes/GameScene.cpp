@@ -82,6 +82,24 @@ void GameScene::initUI()
 ///按钮
 void GameScene::initButton()
 {
+    //------------------------------------------
+    //暂停
+    auto spPauseNormal = Sprite::createWithTexture(textureCache->getTextureForKey(s_game_pause_n));
+    auto spPauseSelected = Sprite::createWithTexture(textureCache->getTextureForKey(s_game_pause_s));
+    
+    //自动提示连接按钮
+    auto menuItemSpPause = MenuItemSprite::create(spPauseNormal, spPauseSelected, CC_CALLBACK_1(GameScene::autoClear, this));
+    
+    auto menuPause = Menu::create(menuItemSpPause, nullptr);
+    
+    menuPause->setAnchorPoint(Vec2(1, 1));
+    
+    menuPause->setPosition(wSize.width - 60, wSize.height - 60);
+    
+    addChild(menuPause);
+    
+    //------------------------------------------
+    //提示
     auto tip = Sprite::createWithTexture(textureCache->getTextureForKey(s_game_leisure));
     
     //自动提示连接按钮
@@ -91,7 +109,7 @@ void GameScene::initButton()
     
     menu->setAnchorPoint(Vec2(1, 1));
     
-    menu->setPosition(wSize.width - 100, wSize.height - 100);
+    menu->setPosition(wSize.width - 80, wSize.height - 200);
     
     addChild(menu);
 
@@ -374,12 +392,14 @@ void GameScene::initMap()
         {
             // 地图数组赋值
             mMap[i][j] = x;
+#if 1
             // y控制反转，x控制每格值增加，增大到图片总数后从再1开始递增
-            if (y == 1)
+            if(y == 1)
             {
                 x++;
                 y = 0;
-                if ( x == iconCount)
+                
+                if(x == iconCount)
                 {
                     x = 1;
                 }
@@ -388,6 +408,7 @@ void GameScene::initMap()
             {
                 y = 1;
             }
+#endif
         }
     }
     
@@ -410,6 +431,7 @@ void GameScene::drawMap()
                 char iconName[64] = {0};
                 // 格式化图片名
                 sprintf(iconName, "%d.png", mMap[x][y]);
+                CCLOG("iconName : %s",iconName);
                 auto position = indextoScreen(x, y);
                 // 所有图片已经加到帧缓存，这里直接用名字取一帧，创建一个精灵
                 auto icon = Sprite::createWithSpriteFrame(SpriteFrameCache::getInstance()->getSpriteFrameByName(iconName));
@@ -442,8 +464,11 @@ void GameScene::change()
         {
             tempX = 1 + (int)(CCRANDOM_0_1() * (xCount - 2));
             tempY = 1 + (int)(CCRANDOM_0_1() * (yCount - 2));
+            
             tempM = mMap[x][y];
+            
             mMap[x][y] = mMap[tempX][tempY];
+            
             mMap[tempX][tempY] = tempM;
         }
         
@@ -618,7 +643,7 @@ void GameScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
                 mSelected.push_back(point);
                 drawLine();
                 
-#if 1
+#if 0
                 if (dieTemp())
                 {
                     CCLOG("die-----");
@@ -661,7 +686,8 @@ void GameScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
     
     
     // 绘制选择图标，选中时变大
-    for ( Vec2 position: mSelected ) {
+    for ( Vec2 position: mSelected )
+    {
         int x = (int)position.x;
         
         int y = (int)position.y;
@@ -689,18 +715,23 @@ void GameScene::onTouchEnded(cocos2d::Touch *touch, cocos2d::Event *event)
 // 数组坐标转换为屏幕坐标
 Vec2 GameScene::indextoScreen(int x, int y)
 {
-    return Vec2(x * iconSize, y * iconSize);
+    return Vec2(x * iconSize, y * iconSize) + Vec2(100.0f, 80.0f);
 }
 
 Vec2 GameScene::screentoIndex(float x, float y)
 {
-    int ix = ceil((x - iconSize / 2) / iconSize);
+    Vec2 pos = Vec2(x, y) - Vec2(100.0f,80.0f);
     
-    int iy = ceil((y - iconSize / 2) / iconSize);
+    int ix = ceil((pos.x - iconSize / 2) / iconSize);
     
-    if (ix < xCount && iy < yCount) {
-        return Vec2(ix ,iy);
-    }else{
+    int iy = ceil((pos.y - iconSize / 2) / iconSize);
+    
+    if (ix < xCount && iy < yCount)
+    {
+        return Vec2(ix ,iy) ;
+    }
+    else
+    {
         return Vec2::ZERO;
     }
 }
